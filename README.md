@@ -1,5 +1,7 @@
 # Kmeans
 
+### TUTORIAL LINK https://github.com/gggandre/Kmeans/assets/84719490/cddbfb3f-98a9-4c6c-a171-b4621d3ce8b0
+
 ## Initialization:
 - A number k is set, representing the desired number of clusters.
 - k random points from the dataset are chosen as the initial centroids.
