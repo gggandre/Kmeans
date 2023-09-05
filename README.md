@@ -54,7 +54,7 @@
 8. Once you write the number of clusters, click in the button "Run KMeans"
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/053e0dd1-a3e2-43c2-af2f-094617691d55)
 
-10. Now you can see the metrics of your cluster selected
+10. You can see again the metrics
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/29e8b40a-e7cf-4cb8-b8a3-7157d463c9e6)
 
 11. In the console you can see the Effectiveness Percentages: of Training and Validation data
