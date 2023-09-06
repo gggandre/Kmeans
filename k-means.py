@@ -1,5 +1,3 @@
-from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score # Importing metrics
-
 #----------------------------------------------------------
 # Feedback Moment: Module 2
 # Implementation of a machine learning technique without the use of a framework.
@@ -17,36 +15,37 @@ from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bo
 # 4. Davies-Bouldin Index: This metric indicates the average similarity of each cluster with the most similar cluster. Lower values indicate better clusters.
 # These metrics were calculated for both the training and validation datasets to ensure the model generalizes well.
 #----------------------------------------------------------
+
 import pandas as pd
 import numpy as np
 import tkinter as tk
-from tkinter import ttk
-import tkinter.messagebox
+from tkinter import ttk, filedialog, messagebox
+from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
+
 
 def euclidean_distance(point1, point2):
     """
     The function calculates the Euclidean distance between two points in a multi-dimensional space.
-    :param point1: The first point in the Euclidean distance calculation. It can be a list, tuple, or
-    numpy array representing the coordinates of the point in n-dimensional space
-    :param point2: The first point in the Euclidean distance calculation. It is a numpy array
-    representing a point in n-dimensional space
-    :return: the Euclidean distance between two points.
+    :param point1: The first point in the Euclidean distance calculation
+    :param point2: The second point in the Euclidean distance calculation
+    :return: the Euclidean distance between point1 and point2.
     """
     return np.sqrt(np.sum((point1 - point2) ** 2))
 
-# Kmeans algorithm
+# The KMeans class implements the K-means clustering algorithm for clustering data into k clusters.
 class KMeans:
     def __init__(self, k=3, max_iters=100, random_seed=None):
         """
         The function initializes the parameters for a k-means clustering algorithm.
-        :param k: The number of clusters to create, defaults to 3 (optional)
+        :param k: The number of clusters to create. It determines how many centroids will be initialized and
+        how many clusters the algorithm will try to find, defaults to 3 (optional)
         :param max_iters: The `max_iters` parameter specifies the maximum number of iterations that the
         algorithm will perform before stopping. This is used to control the convergence of the algorithm,
         defaults to 100 (optional)
-        :param random_seed: The `random_seed` parameter is used to initialize the random number generator.
-        By setting a specific value for `random_seed`, you can ensure that the random numbers generated
-        during the execution of the code are reproducible. This can be useful for debugging or when you want
-        to compare the results of different runs
+        :param random_seed: The `random_seed` parameter is used to set the seed for the random number
+        generator. This allows you to reproduce the same results when running the code multiple times. By
+        setting a specific value for `random_seed`, you can ensure that the random initialization of
+        centroids in the k-means algorithm remains the
         """
         self.k = k
         self.max_iters = max_iters
@@ -55,9 +54,8 @@ class KMeans:
 
     def fit(self, data):
         """
-        The `fit` function initializes centroids randomly and iteratively updates them until convergence
-        using the k-means algorithm.
-        :param data: The "data" parameter is a numpy array that represents the dataset on which the K-means
+        The `fit` function is used to train a k-means clustering model on the given data.
+        :param data: The `data` parameter is a numpy array that represents the dataset on which the K-means
         algorithm will be applied. Each row of the array represents a data point, and each column represents
         a feature of that data point
         :return: The `fit` method returns the instance of the class itself (`self`).
@@ -72,7 +70,6 @@ class KMeans:
                 if (labels == i).any():
                     new_centroids.append(data[labels == i].mean(axis=0))
                 else:
-                    # Reinicializar el centroide a una nueva posición aleatoria si no tiene puntos asignados
                     new_centroids.append(data[np.random.choice(len(data))])
             new_centroids = np.array(new_centroids)
             if np.all(self.centroids == new_centroids):
@@ -82,9 +79,8 @@ class KMeans:
 
     def predict(self, data):
         """
-        The `predict` function takes in a dataset and returns an array of the closest centroid for each data
-        point.
-        :param data: The `data` parameter is a list or array of data points that you want to make
+        The function predicts the closest centroid for each data point.
+        :param data: The "data" parameter is a list or array of data points that you want to make
         predictions for. Each data point should be a list or array of features
         :return: a numpy array containing the closest centroid for each point in the input data.
         """
@@ -92,27 +88,25 @@ class KMeans:
 
     def _closest_centroid(self, point):
         """
-        The function `_closest_centroid` calculates the Euclidean distance between a given point and each
-        centroid in a list, and returns the index of the centroid with the minimum distance.
-        :param point: The point parameter represents a data point for which we want to find the closest
-        centroid
-        :return: the index of the closest centroid to the given point.
+        The function `_closest_centroid` calculates the closest centroid to a given point using the
+        Euclidean distance.
+        :param point: A single data point for which we want to find the closest centroid
+        :return: the index of the centroid that is closest to the given point.
         """
         distances = [euclidean_distance(point, centroid) for centroid in self.centroids]
         return np.argmin(distances)
 
-# GUI para KMeans
 class KMeansGUI(tk.Tk):
     def __init__(self, data, features):
         """
-        The above function is the initialization function for a KMeans Clustering GUI application using
-        Tkinter in Python.
-        :param data: The "data" parameter is the dataset that will be used for clustering. It should be a
-        matrix or dataframe where each row represents a data point and each column represents a feature
-        of that data point
+        The above code defines a class with an initialization method that sets up a GUI for running KMeans
+        clustering on Spotify data.
+        :param data: The "data" parameter is the dataset that you want to perform KMeans clustering on. It
+        should be a matrix or a dataframe where each row represents a data point and each column represents
+        a feature of that data point
         :param features: The "features" parameter is a list that contains the names of the features or
-        attributes of the data. These features are used to perform the KMeans clustering algorithm on the
-        Spotify data
+        attributes of the data that will be used for clustering. These features could be any measurable
+        characteristics of the songs in the Spotify data, such as danceability, energy, loudness, etc
         """
         super().__init__()
         self.data = data
@@ -130,108 +124,32 @@ class KMeansGUI(tk.Tk):
         self.tree.heading('Cluster', text='Cluster')
         self.tree.pack(pady=20, padx=20, expand=True, fill='both')
 
-def run_kmeans(self):
-    """
-    The function `run_kmeans` performs K-means clustering on a set of features and displays the results
-    in a treeview widget. Before running, it checks if the entered k value exceeds the number of data points.
-    """
-    k = int(self.k_entry.get())
-    
-    # Check if k exceeds the number of data points
-    if k >= len(self.features):
-        # Display an error message to the user
-        error_msg = "Entered k value exceeds the number of data points. Please try with a smaller value."
-        tk.messagebox.showerror("Error", error_msg)
-        return
-    
-    self.kmeans_model = KMeans(k=k, random_seed=42)
-    self.kmeans_model.fit(self.features)
-    clusters = self.kmeans_model.predict(self.features)
-    for i in self.tree.get_children():
-        self.tree.delete(i)
-    for idx, (song_name, cluster) in enumerate(zip(self.data['track_name'], clusters)):
-        self.tree.insert('', 'end', text=str(idx+1), values=(song_name, cluster))
-KMeansGUI.run_kmeans = run_kmeans
-
-
-# Loading the dataset
-spotify_data = pd.read_csv("spotify-2023.csv", encoding="ISO-8859-1")
-
-# Splitting the data into train, validation, and test sets
-train_data, temp_data = np.split(spotify_data.sample(frac=1, random_state=42), [int(0.7*len(spotify_data))])
-validation_data, test_data = np.split(temp_data, [int(0.5*len(temp_data))])
-
-# If you want to save the datasets to separate CSV files:
-train_data.to_csv("train_data.csv", index=False)
-validation_data.to_csv("validation_data.csv", index=False)
-test_data.to_csv("test_data.csv", index=False)
-
-import tkinter as tk
-from tkinter import ttk
-
-def display_dataframes(train, validation, test):
-    root = tk.Tk()
-    root.title("Data Preview")
-
-    # Frame for train data
-    train_frame = ttk.LabelFrame(root, text="Train Data", padding="10")
-    train_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
-    train_tree = ttk.Treeview(train_frame, columns=list(train.columns), show="headings")
-    for col in train.columns:
-        train_tree.heading(col, text=col)
-    train_tree.pack(fill="both", expand=True)
-    for index, row in train.iterrows():
-        train_tree.insert("", "end", values=list(row))
-
-    # Frame for validation data
-    validation_frame = ttk.LabelFrame(root, text="Validation Data", padding="10")
-    validation_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
-    validation_tree = ttk.Treeview(validation_frame, columns=list(validation.columns), show="headings")
-    for col in validation.columns:
-        validation_tree.heading(col, text=col)
-    validation_tree.pack(fill="both", expand=True)
-    for index, row in validation.iterrows():
-        validation_tree.insert("", "end", values=list(row))
-
-    # Frame for test data
-    test_frame = ttk.LabelFrame(root, text="Test Data", padding="10")
-    test_frame.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
-    test_tree = ttk.Treeview(test_frame, columns=list(test.columns), show="headings")
-    for col in test.columns:
-        test_tree.heading(col, text=col)
-    test_tree.pack(fill="both", expand=True)
-    for index, row in test.iterrows():
-        test_tree.insert("", "end", values=list(row))
-
-    root.mainloop()
-
-# Display the datasets visually
-
-# Loading the dataset
-spotify_data = pd.read_csv("spotify-2023.csv", encoding="ISO-8859-1")
-
-# Splitting the data into train, validation, and test sets
-train_data, temp_data = np.split(spotify_data.sample(frac=1, random_state=42), [int(0.7*len(spotify_data))])
-validation_data, test_data = np.split(temp_data, [int(0.5*len(temp_data))])
-
-# Selected features
-selected_features = ['bpm', 'danceability_%', 'valence_%', 'energy_%', 'acousticness_%', 
-                    'instrumentalness_%', 'liveness_%', 'speechiness_%']
-X_train = train_data[selected_features].values
-X_train = (X_train - X_train.mean(axis=0)) / X_train.std(axis=0)
-
-X_validation = validation_data[selected_features].values
-X_validation = (X_validation - X_train.mean(axis=0)) / X_train.std(axis=0)
-
+    def run_kmeans(self):
+        """
+        The function performs k-means clustering on a set of features and displays the resulting clusters in
+        a treeview widget.
+        :return: The function does not explicitly return anything.
+        """
+        k = int(self.k_entry.get())
+        if k >= len(self.features):
+            error_msg = "Entered k value exceeds the number of data points. Please try with a smaller value."
+            tk.messagebox.showerror("Error", error_msg)
+            return
+        self.kmeans_model = KMeans(k=k, random_seed=42)
+        self.kmeans_model.fit(self.features)
+        clusters = self.kmeans_model.predict(self.features)
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+        for idx, (song_name, cluster) in enumerate(zip(self.data['track_name'], clusters)):
+            self.tree.insert('', 'end', text=str(idx+1), values=(song_name, cluster))
 
 def calculate_inertia(data, model):
     """
     The function calculates the inertia of a clustering model given a dataset.
     :param data: The data parameter is a numpy array or a pandas DataFrame containing the data points
-    that you want to calculate the inertia for. Each row of the data represents a data point, and each
-    column represents a feature of that data point
-    :param model: The "model" parameter refers to a clustering model that has been trained on some data.
-    It could be any clustering algorithm, such as K-means or DBSCAN
+    that you want to calculate the inertia for. Each row of the data represents a data point
+    :param model: The `model` parameter refers to a clustering model that has been trained on some data.
+    It could be any clustering algorithm such as K-means, DBSCAN, or hierarchical clustering
     :return: the inertia value, which is a measure of how internally coherent the clusters are.
     """
     centroids = model.centroids
@@ -260,49 +178,27 @@ def calculate_metrics(data, model):
     davies_bouldin = davies_bouldin_score(data, labels)
     return inertia, silhouette, calinski_harabasz, davies_bouldin
 
-
-def calculate_metrics(data, model):
-    """
-    The function "calculate_metrics" calculates various clustering metrics for a given dataset and
-    model.
-    :param data: The data parameter represents the input data that will be used for clustering. It could
-    be a numpy array or a pandas DataFrame
-    :param model: The "model" parameter refers to the clustering model that you are using to cluster the
-    data. It could be any clustering algorithm such as K-means, DBSCAN, or hierarchical clustering. The
-    model is used to predict the labels for the data points
-    :return: four metrics: inertia, silhouette score, Calinski-Harabasz score, and Davies-Bouldin score.
-    """
-    labels = model.predict(data)
-    inertia = calculate_inertia(data, model)
-    silhouette = silhouette_score(data, labels)
-    calinski_harabasz = calinski_harabasz_score(data, labels)
-    davies_bouldin = davies_bouldin_score(data, labels)
-    return inertia, silhouette, calinski_harabasz, davies_bouldin
-
 def display_metrics(train_metrics, validation_metrics):
     """
     The `display_metrics` function creates a GUI window using Tkinter to display clustering metrics for
     both train and validation data.
     :param train_metrics: A list of metrics calculated on the training data. The metrics should be in
     the following order: Inertia (WCSS), Silhouette Score, Calinski-Harabasz Index, Davies-Bouldin Index
-    :param validation_metrics: The `validation_metrics` parameter is a list containing the values of
-    different clustering metrics calculated for the validation data. These metrics include "Inertia
-    (WCSS)", "Silhouette Score", "Calinski-Harabasz Index", and "Davies-Bouldin Index". Each value in
-    the
+    :param validation_metrics: The `validation_metrics` parameter is a list of metrics calculated on the
+    validation data. These metrics include "Inertia (WCSS)", "Silhouette Score", "Calinski-Harabasz
+    Index", and "Davies-Bouldin Index". Each metric is represented as a floating-point number
     """
     root = tk.Tk()
     root.title("Clustering Metrics")
 
     metrics = ["Inertia (WCSS)", "Silhouette Score", "Calinski-Harabasz Index", "Davies-Bouldin Index"]
-    
-    # Displaying metrics for train data
+
     train_frame = ttk.LabelFrame(root, text="Train Data Metrics", padding="10")
     train_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
     for i, metric in enumerate(metrics):
         label = ttk.Label(train_frame, text=f"{metric}: {train_metrics[i]:.4f}")
         label.pack(pady=5)
 
-    # Displaying metrics for validation data
     validation_frame = ttk.LabelFrame(root, text="Validation Data Metrics", padding="10")
     validation_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
     for i, metric in enumerate(metrics):
@@ -311,69 +207,81 @@ def display_metrics(train_metrics, validation_metrics):
 
     root.mainloop()
 
-# Calculate metrics
-
-# Training the KMeans model on the train dataset
-kmeans_model = KMeans(k=3, max_iters=100, random_seed=42)
-kmeans_model.fit(X_train)
-train_metrics = calculate_metrics(X_train, kmeans_model)
-validation_metrics = calculate_metrics(X_validation, kmeans_model)
-
-# Display the metrics visually
-display_metrics(train_metrics, validation_metrics)
-
-display_dataframes(train_data.head(), validation_data.head(), test_data.head())
-
-
-
+def calculate_effectiveness_percentage(data, model):
+    """
+    The function calculates the effectiveness percentage of a model by comparing the distances between
+    data points and their assigned centroids.
+    :param data: The data parameter is a numpy array that represents the dataset on which the model is
+    being evaluated. It contains the input features for each data point
+    :param model: The "model" parameter refers to a clustering model that has been trained on some data.
+    It should have a "centroids" attribute that represents the centroids of the clusters in the model
+    :return: the effectiveness percentage of the model on the given data.
+    """
+    centroids = model.centroids
+    clusters = model.predict(data)
+    distances = np.linalg.norm(data - centroids[clusters], axis=1)
+    threshold_distance = np.percentile(distances, 95)
+    effectiveness = np.sum(distances < threshold_distance) / len(data)
+    return effectiveness
 
 def display_effectiveness(train_effectiveness, validation_effectiveness):
+    """
+    The function `display_effectiveness` prints the effectiveness percentages of training and validation
+    data.
+    :param train_effectiveness: The effectiveness of the model on the training data, represented as a
+    decimal value between 0 and 1
+    :param validation_effectiveness: The parameter `validation_effectiveness` represents the
+    effectiveness percentage of the model on the validation data
+    """
     print("Effectiveness Percentages:")
     print(f"Training Data: {train_effectiveness * 100:.2f}%")
     print(f"Validation Data: {validation_effectiveness * 100:.2f}%")
 
-def calculate_effectiveness_percentage(data, model):
-    centroids = model.centroids
-    clusters = model.predict(data)
-    distances = np.linalg.norm(data - centroids[clusters], axis=1)
-    threshold_distance = np.percentile(distances, 95)  # 95 percentile
-    effectiveness = np.sum(distances < threshold_distance) / len(data)
-    return effectiveness
+def main():
+    """
+    The main function loads a Spotify dataset, splits it into train, validation, and test sets, performs
+    feature scaling and extraction, calculates metrics and effectiveness, and executes a KMeans GUI.
+    """
+    # Loading the dataset
+    file_path = filedialog.askopenfilename(title="Select the Spotify dataset", filetypes=[("CSV files", "*.csv")])
+    if not file_path:
+        print("No file selected. Exiting...")
+        exit()
 
-# Load the data and select the features
-# If you run your code in your local environment you must change the path to the dataset to your own path.
-data = pd.read_csv('D:\ia_1\ml\evidencia\spotify-2023.csv', encoding="ISO-8859-1")
-selected_features = ['bpm', 'danceability_%', 'valence_%', 'energy_%', 'acousticness_%', 
-                    'instrumentalness_%', 'liveness_%', 'speechiness_%']
-X = data[selected_features].values
-X = (X - X.mean(axis=0)) / X.std(axis=0)
+    spotify_data = pd.read_csv(file_path, encoding="ISO-8859-1")
 
-# Create and execute the GUI application
-app = KMeansGUI(data, X)
-app.mainloop()
+    # Splitting the data into train, validation, and test sets
+    train_data, temp_data = np.split(spotify_data.sample(frac=1, random_state=42), [int(0.7*len(spotify_data))])
+    validation_data, test_data = np.split(temp_data, [int(0.5*len(temp_data))])
 
+    # Feature scaling and extraction
+    selected_features = ['bpm', 'danceability_%', 'valence_%', 'energy_%', 'acousticness_%', 
+                        'instrumentalness_%', 'liveness_%', 'speechiness_%']
+    X_train = train_data[selected_features].values
+    X_train = (X_train - X_train.mean(axis=0)) / X_train.std(axis=0)
 
-# Load the data and select the features
-data = pd.read_csv('D:\ia_1\ml\evidencia\spotify-2023.csv', encoding="ISO-8859-1")
-selected_features = ['bpm', 'danceability_%', 'valence_%', 'energy_%', 'acousticness_%', 
-                    'instrumentalness_%', 'liveness_%', 'speechiness_%']
-X = data[selected_features].values
-X = (X - X.mean(axis=0)) / X.std(axis=0)
+    X_validation = validation_data[selected_features].values
+    X_validation = (X_validation - X_train.mean(axis=0)) / X_train.std(axis=0)
 
-# Training the KMeans model on the train dataset
-kmeans_model = KMeans(k=3, max_iters=100, random_seed=42)
-kmeans_model.fit(X_train)
-train_metrics = calculate_metrics(X_train, kmeans_model)
-validation_metrics = calculate_metrics(X_validation, kmeans_model)
+    # Calculate metrics
+    kmeans_model = KMeans(k=3, max_iters=100, random_seed=42)
+    kmeans_model.fit(X_train)
+    train_metrics = calculate_metrics(X_train, kmeans_model)
+    validation_metrics = calculate_metrics(X_validation, kmeans_model)
 
-# Display the metrics visually
-display_metrics(train_metrics, validation_metrics)
+    # Display metrics
+    display_metrics(train_metrics, validation_metrics)
 
-# Calculate and display effectiveness
-train_effectiveness = calculate_effectiveness_percentage(X_train, kmeans_model)
-validation_effectiveness = calculate_effectiveness_percentage(X_validation, kmeans_model)
-display_effectiveness(train_effectiveness, validation_effectiveness)
+    # Calculate and display effectiveness
+    train_effectiveness = calculate_effectiveness_percentage(X_train, kmeans_model)
+    validation_effectiveness = calculate_effectiveness_percentage(X_validation, kmeans_model)
+    display_effectiveness(train_effectiveness, validation_effectiveness)
 
-# Create and execute the GUI application
-app = KMeansGUI(data, X)
-app.mainloop()
+    # Execute KMeans GUI
+    app = KMeansGUI(spotify_data, X_train)
+    app.mainloop()
+
+# The above code is checking if the current module is being run as the main program. If it is, then it
+# calls the `main()` function.
+if __name__ == "__main__":
+    main()
