@@ -1,6 +1,6 @@
 # Kmeans
 
-### TUTORIAL LINK https://github.com/gggandre/Kmeans/assets/84719490/cddbfb3f-98a9-4c6c-a171-b4621d3ce8b0
+### TUTORIAL LINK https://github.com/gggandre/Kmeans/assets/84719490/791cf797-b2e3-4436-b6c3-f84aa253459d
 
 ## Initialization:
 - A number k is set, representing the desired number of clusters.
@@ -44,22 +44,22 @@
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/92eecb31-649d-417b-8fdc-59dc7d533675)
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/829a7fbd-93c0-4fd4-bc85-84a653138cca)
 
-5. Now you see the metrics
+5. Select the file in your explorer to make easier the csv upload and click open
+![image](https://github.com/gggandre/Kmeans/assets/84719490/c700f60b-ec6c-422c-9aed-3d4566d0073b)
+ 
+6. Now you see the metrics
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/7248cb3f-6df8-41d1-92f5-480fb69d50fa)
 
-6. Once you close this tab you can see the train data, validation data and test data
+7. Once you close this tab you can see the train data, validation data and test data
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/14f5ec2c-4813-481c-a3c1-4a663db22b82)
 
-7. Use the GUI to write the number of clusters (k)
+8. Use the GUI to write the number of clusters (k)
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/d576ce3a-fb38-449c-a8b1-9ebe3787a7f5)
 
-8. Once you write the number of clusters, click in the button "Run KMeans"
+9. Once you write the number of clusters, click in the button "Run KMeans"
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/053e0dd1-a3e2-43c2-af2f-094617691d55)
 
-10. You can see again the metrics
-![image](https://github.com/gggandre/Kmeans/assets/84719490/29e8b40a-e7cf-4cb8-b8a3-7157d463c9e6)
-
-11. In the console you can see the Effectiveness Percentages: of Training and Validation data
+10. In the console you can see the Effectiveness Percentages: of Training and Validation data
 ![image](https://github.com/gggandre/Kmeans/assets/84719490/a3b3fada-c6c2-4a06-a2d4-94664ae01203)
 
  - Note: If you exceed the number of clusters (k) the program show a error message
